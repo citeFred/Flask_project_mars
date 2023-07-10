@@ -11,6 +11,7 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
+# fetch('URL')부분, 반환값은 res로 전달.
 # "localhost:5001/mars" URL POST방식 요청에 응답
 @app.route("/mars", methods=["POST"])
 def mars_post():
@@ -18,6 +19,7 @@ def mars_post():
     print(sample_receive)
     return jsonify({'msg':'POST 연결 완료!'})
 
+# fetch('URL')부분, 반환값은 res로 전달.
 # "localhost:5001/mars" URL GET방식 요청에 응답
 @app.route("/mars", methods=["GET"])
 def mars_get():
