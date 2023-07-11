@@ -6,22 +6,56 @@
 from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 
+# MongoDB(Atlas Cloud)를 사용하기 위한 pymongo 임포트
+from pymongo import MongoClient
+import certifi
+ca = certifi.where()
+client = MongoClient('mongodb+srv://ohnyong:test@cluster0.lu7mz8j.mongodb.net/?retryWrites=true&w=majority',tlsCAFile=ca)
+db = client.dbsparta 
+
 # "localhost:5001/" URL요청에 메인 뷰 페이지 반환 응답
 @app.route('/')
 def home():
     return render_template('index.html')
 
+# fetch('URL')부분, 반환값은 res로 전달.
 # "localhost:5001/mars" URL POST방식 요청에 응답
 @app.route("/mars", methods=["POST"])
 def mars_post():
-    sample_receive = request.form['sample_give']
-    print(sample_receive)
-    return jsonify({'msg':'POST 연결 완료!'})
+    # request.form을 통해 요청과 함께 담겨진 body(==formData)를 가져옴
+    # sample_receive = request.form['sample_give']
+    # print(sample_receive)
 
+    # request.form을 통해 요청과 함께 담겨진 body(==formData)를 가져옴
+    # 주문자의 이름, 주소, 땅 수량을 가져온다.
+    name_receive = request.form['name_give']
+    address_receive = request.form['address_give']
+    size_receive = request.form['size_give']
+    print(name_receive,address_receive,size_receive)
+
+    # DB에 넣기 (pymongo 사용 필요)
+    # INSERT_ONE
+    # 저장 - 예시
+    doc ={
+        'name':name_receive,
+        'address':address_receive,
+        'size':size_receive
+    }
+    db.mars.insert_one(doc)
+
+    return jsonify({'msg':'POST 연결 완료! + DB 저장(insert) 완료!'})
+
+# fetch('URL')부분, 반환값은 res로 전달.
 # "localhost:5001/mars" URL GET방식 요청에 응답
 @app.route("/mars", methods=["GET"])
 def mars_get():
-    return jsonify({'msg':'GET 연결 완료!'})
+    # DB에서 (모두)읽기 (pymongo 사용 필요)
+    # READ(FIND)
+    # 여러개 찾기 - 예시 ( _id 값은 제외하고 출력)
+    mars_data = list(db.mars.find({},{'_id':False}))
+
+    # result:mars_data를 json 형식으로 변환하여 반환
+    return jsonify({'result':mars_data})
 
 # app이라는 메인 함수 
 # if __name__ == "__main__" 의 의미는 메인 함수의 선언, 시작을 의미
