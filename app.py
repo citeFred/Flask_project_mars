@@ -15,6 +15,7 @@ def home():
 # "localhost:5001/mars" URL POST방식 요청에 응답
 @app.route("/mars", methods=["POST"])
 def mars_post():
+    # request.form을 통해 요청과 함께 담겨진 body(==formData)를 가져옴
     sample_receive = request.form['sample_give']
     print(sample_receive)
     return jsonify({'msg':'POST 연결 완료!'})
