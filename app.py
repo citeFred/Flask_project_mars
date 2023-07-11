@@ -38,7 +38,7 @@ def mars_post():
     # 저장 - 예시
     doc ={
         'name':name_receive,
-        'adress':address_receive,
+        'address':address_receive,
         'size':size_receive
     }
     db.mars.insert_one(doc)
@@ -49,7 +49,13 @@ def mars_post():
 # "localhost:5001/mars" URL GET방식 요청에 응답
 @app.route("/mars", methods=["GET"])
 def mars_get():
-    return jsonify({'msg':'GET 연결 완료!'})
+    # DB에서 (모두)읽기 (pymongo 사용 필요)
+    # READ(FIND)
+    # 여러개 찾기 - 예시 ( _id 값은 제외하고 출력)
+    mars_data = list(db.mars.find({},{'_id':False}))
+
+    # result:mars_data를 json 형식으로 변환하여 반환
+    return jsonify({'result':mars_data})
 
 # app이라는 메인 함수 
 # if __name__ == "__main__" 의 의미는 메인 함수의 선언, 시작을 의미
